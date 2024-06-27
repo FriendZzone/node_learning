@@ -1,6 +1,9 @@
 {
   "name": "node_learning",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node main.js"
+  },
   "license": "MIT"
 }
