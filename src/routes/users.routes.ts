@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { body, query } from 'express-validator'
 import { loginController, registerController } from '~/controllers/users.controllers'
-import { loginValidator } from '~/middlewares/users.middlewares'
+import { loginValidator, registerValidator } from '~/middlewares/users.middlewares'
+import { validate } from '~/utils/validation'
 
 const usersRouter = Router()
 
@@ -10,6 +10,6 @@ usersRouter.get('/users', loginValidator, (req, res) => {
 })
 
 usersRouter.post('/login', loginController)
-usersRouter.post('/register', body('email').isEmail().withMessage('Invalid email').escape(), registerController)
+usersRouter.post('/register', registerValidator, registerController)
 
 export default usersRouter
