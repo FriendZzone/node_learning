@@ -10,9 +10,9 @@ export const registerController = async (req: Request, res: Response) => {
   const isValid = validationResult(req)
   if (isValid.isEmpty()) {
     const data = matchedData(req)
-    const { email, password } = data
+    const { email, password, name } = data
     try {
-      const result = await userServices.register({ email, password })
+      const result = await userServices.register({ email, password, name })
 
       return res.json({ msg: 'created user', data: result })
     } catch (error) {
