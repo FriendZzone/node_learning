@@ -13,15 +13,9 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
   if (isValid.isEmpty()) {
     const data = matchedData(req)
     const { email, password, name, date_of_birth } = data
-    try {
-      const result = await userServices.register({ email, password, name, date_of_birth })
+    const result = await userServices.register({ email, password, name, date_of_birth })
 
-      return res.json({ msg: 'created user', data: result })
-    } catch (error) {
-      console.log(error)
-
-      return res.status(400).json({ error })
-    }
+    return res.json({ msg: 'created user', data: result })
   }
 
   return res.status(400).json({ errors: isValid.array() })
