@@ -23,7 +23,7 @@ export const registerValidator = validate(
       trim: true,
       custom: {
         options: async (value) => {
-          const existingUser = await userServices.find(value)
+          const existingUser = await userServices.findOne(value)
           if (existingUser) {
             throw new Error('E-mail already in use')
           }
@@ -53,6 +53,9 @@ export const registerValidator = validate(
           return true
         }
       }
+    },
+    date_of_birth: {
+      notEmpty: true
     }
   })
 )

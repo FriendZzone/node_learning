@@ -1,29 +1,10 @@
 import { ObjectId } from 'mongodb'
+import { MediaType, UserVerifyStatus } from '~/constants/enums'
 
-enum UserVerifyStatus {
-  Unverified, // chưa xác thực email, mặc định = 0
-  Verified, // đã xác thực email
-  Banned // bị khóa
-}
 interface Media {
   url: string
   type: MediaType // video, image
 }
-enum MediaType {
-  Image,
-  Video
-}
-enum TweetAudience {
-  Everyone, // 0
-  TwitterCircle // 1
-}
-enum TweetType {
-  Tweet,
-  Retweet,
-  Comment,
-  QuoteTweet
-}
-
 export interface UserType {
   _id?: ObjectId
   name?: string
