@@ -1,5 +1,6 @@
-import express, { NextFunction, Request, Response } from 'express'
+import express from 'express'
 import { timeLog } from './middlewares/app.middlewares'
+import { defaultErrorHandler } from './middlewares/error.middlewares'
 import usersRouter from './routes/users.routes'
 import databaseService from './services/database.services'
 const PORT = 3000
@@ -11,9 +12,7 @@ app.use(express.json())
 app.use(timeLog)
 
 app.use('/api', usersRouter)
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
-  res.status(400).json({ error: err.message })
-})
+app.use(defaultErrorHandler)
 
 databaseService.connect()
 
