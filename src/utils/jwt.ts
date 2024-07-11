@@ -1,6 +1,6 @@
 import { config } from 'dotenv'
 import { readFileSync } from 'fs'
-import jwt, { SignOptions } from 'jsonwebtoken'
+import jwt, { JwtPayload, SignOptions } from 'jsonwebtoken'
 config()
 
 export const signToken = ({
@@ -24,17 +24,19 @@ export const signToken = ({
   })
 }
 
-export function verifyAndDecodeJWT(token: string) {
-  try {
-    // Read the public key from the file
-    const publicKey = readFileSync('public.key', 'utf8')
-
-    // Verify the JWT and decode the payload
-    const decoded = jwt.verify(token, publicKey, { algorithms: ['RS256'] })
-
-    return decoded
-  } catch (err) {
-    console.error('Error verifying and decoding JWT:', err)
-    return null
-  }
+export function verifyToken({
+  token,
+  secretOrPublicKey = process.env.JWT_SECRET as string
+}: {
+  token: string
+  secretOrPublicKey?: string
+}) {
+  return new Promise<JwtPayload>((resolve, reject) => {
+    jwt.verify(token, secretOrPublicKey, (error, decoded) => {
+      if (error) {
+        throw reject(error)
+      }
+      resolve(decoded as JwtPayload)
+    })
+  })
 }

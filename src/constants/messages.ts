@@ -19,5 +19,7 @@ export enum UserMessages {
   USER_NOT_FOUND = 'User not found',
   LOGIN_SUCCESS = 'Login success',
   LOGOUT_SUCCESS = 'Logout success',
-  REGISTER_SUCCESS = 'Register success'
+  REGISTER_SUCCESS = 'Register success',
+  ACCESS_TOKEN_IS_REQUIRED = 'Access token is required',
+  ACCESS_TOKEN_IS_INVALID = 'Access token is invalid'
 }
