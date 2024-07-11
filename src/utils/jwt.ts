@@ -1,5 +1,7 @@
+import { config } from 'dotenv'
 import { readFileSync } from 'fs'
 import jwt, { SignOptions } from 'jsonwebtoken'
+config()
 
 export const signToken = ({
   payload,

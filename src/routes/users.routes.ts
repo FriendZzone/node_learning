@@ -9,7 +9,7 @@ usersRouter.get('/users', loginValidator, (req, res) => {
   res.json({ msg: 'hello users' })
 })
 
-usersRouter.post('/login', loginController)
+usersRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
 usersRouter.post('/register', registerValidator, wrapRequestHandler(registerController))
 
 export default usersRouter

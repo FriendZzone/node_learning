@@ -25,5 +25,6 @@ export const validate = (validation: RunnableValidationChains<ValidationChain>) 
       }
       entityError.errors[key] = errorsObject[key]
     }
+    next(entityError)
   }
 }
