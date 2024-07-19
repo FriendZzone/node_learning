@@ -7,20 +7,21 @@ import databaseService from './database.services'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import { ObjectId } from 'mongodb'
 import { config } from 'dotenv'
+import { UserMessages } from '~/constants/messages'
 config()
 
 class UserServices {
   private signAccessToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.AccessToken },
-      options: { algorithm: 'HS256', expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN }
+      options: { algorithm: 'HS256', expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
     })
   }
 
   private signRefreshToken(user_id: string) {
     return signToken({
       payload: { user_id, token_type: TokenType.RefreshToken },
-      options: { algorithm: 'HS256', expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN }
+      options: { algorithm: 'HS256', expiresIn: process.env.REFRESH_TOKEN_EXPIRES_IN }
     })
   }
 
@@ -57,6 +58,13 @@ class UserServices {
 
   findOne(user: Partial<User>) {
     return databaseService.users.findOne(user)
+  }
+
+  async logout(refresh_token: string) {
+    const result = await databaseService.refreshTokens.deleteOne({ token: refresh_token })
+    return {
+      message: UserMessages.LOGOUT_SUCCESS
+    }
   }
 }
 const userServices = new UserServices()

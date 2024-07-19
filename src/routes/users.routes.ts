@@ -1,11 +1,16 @@
 import { Router } from 'express'
-import { loginController, registerController } from '~/controllers/users.controllers'
-import { accessTokenValidator, loginValidator, registerValidator } from '~/middlewares/users.middlewares'
+import { loginController, logoutController, registerController } from '~/controllers/users.controllers'
+import {
+  accessTokenValidator,
+  loginValidator,
+  refreshTokenValidator,
+  registerValidator
+} from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const usersRouter = Router()
 
-usersRouter.get('/users', loginValidator, (req, res) => {
+usersRouter.get('/users', accessTokenValidator, (req, res) => {
   res.json({ msg: 'hello users' })
 })
 
@@ -39,13 +44,6 @@ usersRouter.post('/register', registerValidator, wrapRequestHandler(registerCont
  * @returns {Object} A JSON object containing a success message.
  * @throws {Error} If the access token is invalid.
  */
-usersRouter.post(
-  '/logout',
-  accessTokenValidator,
-  wrapRequestHandler((req, res) => {
-    // Logout success
-    res.json({ msg: 'logout success' })
-  })
-)
+usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
 
 export default usersRouter

@@ -3,7 +3,7 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { matchedData, validationResult } from 'express-validator'
 import { ObjectId } from 'mongodb'
 import { UserMessages } from '~/constants/messages'
-import { RegisterReqBody } from '~/models/requests/User.requests'
+import { LogoutReqBody, RegisterReqBody } from '~/models/requests/User.requests'
 import User from '~/models/schemas/User.schema'
 import userServices from '~/services/users.services'
 
@@ -25,4 +25,10 @@ export const registerController = async (req: Request<ParamsDictionary, any, Reg
   }
 
   return res.status(400).json({ errors: isValid.array() })
+}
+
+export const logoutController = async (req: Request<ParamsDictionary, any, LogoutReqBody>, res: Response) => {
+  const { refresh_token } = req.body
+  const result = await userServices.logout(refresh_token)
+  return res.json(result)
 }

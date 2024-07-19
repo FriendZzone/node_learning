@@ -1,4 +1,6 @@
+import { Request } from 'express'
 import { checkSchema } from 'express-validator'
+import { JsonWebTokenError } from 'jsonwebtoken'
 import HttpStatus from '~/constants/httpStatus'
 import { UserMessages } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -72,7 +74,7 @@ export const registerValidator = validate(
       trim: true,
       custom: {
         options: async (value) => {
-          const isExistEmail = await usersService.findOne(value)
+          const isExistEmail = await usersService.findOne({ email: value })
           if (isExistEmail) {
             throw new Error(UserMessages.EMAIL_ALREADY_EXISTS)
           }
@@ -93,16 +95,6 @@ export const registerValidator = validate(
           max: 50
         },
         errorMessage: UserMessages.PASSWORD_LENGTH_MUST_BE_FROM_6_TO_50
-      },
-      isStrongPassword: {
-        options: {
-          minLength: 6,
-          minLowercase: 1,
-          minUppercase: 1,
-          minNumbers: 1,
-          minSymbols: 1
-        },
-        errorMessage: UserMessages.PASSWORD_MUST_BE_STRONG
       }
     },
     confirm_password: {
@@ -118,16 +110,6 @@ export const registerValidator = validate(
           max: 50
         },
         errorMessage: UserMessages.CONFIRM_PASSWORD_LENGTH_MUST_BE_FROM_6_TO_50
-      },
-      isStrongPassword: {
-        options: {
-          minLength: 6,
-          minLowercase: 1,
-          minUppercase: 1,
-          minNumbers: 1,
-          minSymbols: 1
-        },
-        errorMessage: UserMessages.CONFIRM_PASSWORD_MUST_BE_STRONG
       },
       custom: {
         options: (value, { req }) => {
@@ -177,5 +159,42 @@ export const accessTokenValidator = validate(
       }
     },
     ['headers']
+  )
+)
+
+export const refreshTokenValidator = validate(
+  checkSchema(
+    {
+      refresh_token: {
+        notEmpty: {
+          errorMessage: UserMessages.REFRESH_TOKEN_IS_REQUIRED
+        },
+        custom: {
+          options: async (value: string, { req }) => {
+            try {
+              const decoded_refresh_token = await verifyToken({ token: value })
+              if (decoded_refresh_token === null) {
+                throw new ErrorWithStatus({
+                  status: HttpStatus.UNAUTHORIZED,
+                  message: UserMessages.USED_REFRESH_TOKEN_OR_NOT_EXIST
+                })
+              }
+              ;(req as Request).decoded_refresh_token = decoded_refresh_token
+            } catch (error) {
+              if (error instanceof JsonWebTokenError) {
+                throw new ErrorWithStatus({
+                  status: HttpStatus.UNAUTHORIZED,
+                  message: UserMessages.REFRESH_TOKEN_IS_INVALID
+                })
+              }
+              throw error
+            }
+
+            return true
+          }
+        }
+      }
+    },
+    ['body']
   )
 )
