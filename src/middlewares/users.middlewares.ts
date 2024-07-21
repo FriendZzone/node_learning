@@ -150,7 +150,10 @@ export const accessTokenValidator = validate(
               })
             }
 
-            const decoded_authorization = await verifyToken({ token: access_token })
+            const decoded_authorization = await verifyToken({
+              token: access_token,
+              secretOrPublicKey: process.env.JWT_SECRET_ACCESS_TOKEN as string
+            })
             req.decoded_authorization = decoded_authorization
 
             return true
@@ -166,13 +169,20 @@ export const refreshTokenValidator = validate(
   checkSchema(
     {
       refresh_token: {
-        notEmpty: {
-          errorMessage: UserMessages.REFRESH_TOKEN_IS_REQUIRED
-        },
+        trim: true,
         custom: {
           options: async (value: string, { req }) => {
+            if (!value) {
+              throw new ErrorWithStatus({
+                status: HttpStatus.UNAUTHORIZED,
+                message: UserMessages.REFRESH_TOKEN_IS_REQUIRED
+              })
+            }
             try {
-              const decoded_refresh_token = await verifyToken({ token: value })
+              const decoded_refresh_token = await verifyToken({
+                token: value,
+                secretOrPublicKey: process.env.JWT_SECRET_REFRESH_TOKEN as string
+              })
               if (decoded_refresh_token === null) {
                 throw new ErrorWithStatus({
                   status: HttpStatus.UNAUTHORIZED,

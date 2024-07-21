@@ -46,4 +46,12 @@ usersRouter.post('/register', registerValidator, wrapRequestHandler(registerCont
  */
 usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
 
+/**
+ * Verify Email.
+ * @route POST /verify-email
+ * @returns {Object} A JSON object containing a success message.
+ * @throws {Error} If the access token is invalid.
+ */
+// usersRouter.post('/logout', refreshTokenValidator, wrapRequestHandler(logoutController))
+
 export default usersRouter
